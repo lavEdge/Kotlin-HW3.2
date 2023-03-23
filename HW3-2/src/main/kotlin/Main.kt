@@ -2,15 +2,26 @@ import kotlin.math.roundToInt
 
 fun main() {
     val remittanceOnMonth = 0
-    val remittance = 17500
+    val remittance = 11_000
     val cardOwnership = "VK Pay"
-    println(
-        """Сумма перевода: $remittance 
+
+    if (limits(remittance, remittanceOnMonth, cardOwnership)) {
+        println(
+            """Сумма перевода: $remittance 
         |Переведено в этом месяце: $remittanceOnMonth
         |Карта: $cardOwnership
         |Комиссия за перевод составит: ${comission(remittance, remittanceOnMonth, cardOwnership)}
-        |Сумма перевода с комиссией: ${remittance+comission(remittance, remittanceOnMonth, cardOwnership)}""".trimMargin()
-    )
+        |Сумма перевода с комиссией: ${
+                remittance + comission(
+                    remittance,
+                    remittanceOnMonth,
+                    cardOwnership
+                )
+            }""".trimMargin()
+        )
+    } else {
+        println("Вы не сможете выполнить перевод, т.к. превышены лимиты")
+    }
 }
 
 fun comission(remittance: Int, remittanceOnMonth: Int, cardOwnership: String): Int {
@@ -30,5 +41,14 @@ fun comission(remittance: Int, remittanceOnMonth: Int, cardOwnership: String): I
     } else if (cardOwnership == "VK Pay") {
         return 0
     }
-    return TODO("Provide the return value")
+    return 0
+}
+
+fun limits(remittance: Int, remittanceOnMonth: Int, cardOwnership: String): Boolean {
+
+    if (cardOwnership == "VK Pay") {
+        return !(remittance > 15_000 || (remittanceOnMonth+remittance) > 40_000)
+    } else {
+        return !(remittance > 150_000 || (remittance+remittanceOnMonth) > 600_000)
+    }
 }
